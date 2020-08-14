@@ -13,14 +13,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Install prerequisites
         run: |
-          BRANCH_OR_TAG=${GITHUB_REF#refs/heads/}
-          BRANCH_OR_TAG=${BRANCH_OR_TAG#refs/tags/}
-          git clone --single-branch --branch $BRANCH_OR_TAG --depth 1 https://${{ secrets.CLONE_TOKEN }}:x-oauth-basic@github.com/${{ github.repository }}.git .
-      - name: cleanup
-        run: sudo rm -rf "/usr/local/share/boost" "$AGENT_TOOLSDIRECTORY"
-      - name: Build runtimes
+          sudo apt update
+          sudo apt -y install cpanminus
+          cpanm --sudo --notest YAML::PP
+
+      - uses: actions/checkout@v2
+
+      - name: Build all runtimes
         run: make build
+
       - name: Run tests
         run: make testv
+        continue-on-error: true

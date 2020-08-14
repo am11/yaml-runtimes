@@ -145,7 +145,7 @@ sub start_daemons {
             say "$name already running";
         }
         else {
-            my $cmd = sprintf q{docker run -d -it --user %d --name %s %s/%s},
+            my $cmd = sprintf q{docker run -it -d --user %d --name %s %s/%s},
                 $<, $name, $prefix, $name;
             my $rc = system $cmd;
             if ($rc) {
@@ -328,7 +328,7 @@ sub build {
         }
         my $mount_options = join ' ', map { "-v$_" } @mounts;
         my $cmd = sprintf
-            'docker run -it --rm --user %s'
+            'docker run --rm --user %s'
             . ' --env HOME=%s --env VERSION=%s --env SOURCE=%s --env LIBNAME=%s '
             . $mount_options
             . " $prefix/%s /buildutils/%s",
